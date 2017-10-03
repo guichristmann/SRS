@@ -1,39 +1,44 @@
-from simulador import *
-from time import sleep
-import thread
-
-# TODO Build a two-way communication so the controller can receive messages
-# about the state of the world
-
-# TODO Bug: if more than 3 balls are in the robot pick range (robot radius)
-# they are all picked up.
+from simulator import *
 
 class Controller:
-    def __init__(self, color):
+    def __init__(self, color=WHITE):
         self.color = color
-        self.message = None
+    
+    def communicate(self, received):
+        send = self.think(received)
+        return send
 
-    def sendMessage(self, message):
-        self.message = message
+    def think(self, received):
+        # do stuff with message received
+        #print received
 
-def run_world_thread(thread_name, controller):
-    world = World([controller])
-    world.run()
+        message = {
+            "move": False, # bool
+            "rotate": 0,   # -1(left), 0(stay) ,1(right)
+            "pick": True, # bool
+            "drop": False  # bool
+        }
 
-if __name__ == "__main__":
-    controller = Controller((0, 137, 85))
+        if len(received["balls"]) > 0:
+            min_distance = 1000
+            closest = -1
+            for i, b in enumerate(received["balls"]):
+                if b.r < min_distance:
+                    min_distance = b.r
+                    closest = i
 
-    thread.start_new_thread(run_world_thread, ("World Thread", controller))
+            goal = received["balls"][closest]
+            move = True
+            print "closest", closest, "goal", goal.a
+            if goal.a > 0:
+                rotate = 1
+            else:
+                rotate = -1
 
-    while True:
-        command = raw_input()
-        if command == 'w':
-            controller.sendMessage("move")
-        elif command == 'a':
-            controller.sendMessage("turnLeft")
-        elif command == 'd':
-            controller.sendMessage("turnRight")
-        elif command == 'p':
-            controller.sendMessage("pick")
-        elif command == 'o':
-            controller.sendMessage("drop")
+            message = {
+                "move": move,#False, # bool
+                "rotate": rotate,#-1,   # -1(left), 0(stay) ,1(right)
+                "pick": True, # bool
+                "drop": False  # bool
+            }
+        return message
