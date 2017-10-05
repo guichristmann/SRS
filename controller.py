@@ -1,21 +1,27 @@
 from simulator import *
 
+tick_count = 0
 class Controller:
-    def __init__(self, color=WHITE):
+    def __init__(self, name="Unnamed", color=WHITE):
         self.color = color
+        self.name = name
+        self.drop_balls = False
     
     def communicate(self, received):
         send = self.think(received)
         return send
 
     def think(self, received):
+        global tick_count
+        tick_count += 1
         # do stuff with message received
         #print received
+
 
         message = {
             "move": False, # bool
             "rotate": 0,   # -1(left), 0(stay) ,1(right)
-            "pick": True, # bool
+            "pick": False, # bool
             "drop": False  # bool
         }
 
@@ -29,16 +35,37 @@ class Controller:
 
             goal = received["balls"][closest]
             move = True
-            print "closest", closest, "goal", goal.a
+            #print "closest", closest, "goal", goal.a
             if goal.a > 0:
                 rotate = 1
             else:
                 rotate = -1
 
-            message = {
-                "move": move,#False, # bool
-                "rotate": rotate,#-1,   # -1(left), 0(stay) ,1(right)
-                "pick": True, # bool
-                "drop": False  # bool
-            }
+            message["move"] = move
+            message["rotate"] = rotate
+
+        if received["picked_balls"] == 3:
+            self.drop_balls = True
+        elif received["picked_balls"] == 0:
+            self.drop_balls = False
+
+        if self.drop_balls:
+            goal = received["dropzone"]
+            if goal.a > 0:
+                rotate = 1
+            else:
+                rotate = -1
+
+            if goal.r < 100:
+                message["drop"] = True
+
+            message["rotate"] = rotate
+            #message["pick"] = False 
+            #message["drop"] = True 
+
+        #print self.drop_balls, received["picked_balls"]
+        if not self.drop_balls:
+            message["pick"] = True
+            message["drop"] = False
+
         return message
