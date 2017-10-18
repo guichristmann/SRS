@@ -2,10 +2,9 @@ import random
 import pygame
 from point2 import Point2
 from pygame.locals import *
-from controller import *
+from test_controller import Test_Controller
+from christmann_controller import Christmann_Controller
 from math import pi
-
-# TODO Deal with droppping balls in the dropping ball zone and in the not dropping balls zone
 
 # pygame constants
 SCREEN_WIDTH = 1266
@@ -154,8 +153,6 @@ class World(object):
                 self.dropBall(c.robot)
                 c.robot.dropping = False
 
-            print c.robot.name, c.robot.score
-
         self.checkDroppedBalls()
 
     # checks if any dropped balls are in the drop zone and awards points to
@@ -284,15 +281,17 @@ def normalizeAngle(angle):
     return angle
 
 if __name__ == "__main__":
-    c1 = Controller("Domotro", STRANGE_BLUE)
-    c2 = Controller("Artorias", (200, 200, 200))
-    c3 = Controller("Jao", (53, 193, 105))
-    c4 = Controller("Nicholas Cage", (173, 85, 33))
-    c5 = Controller("C3PO", GRAY)
-    c6 = Controller("Meh", STRANGE_BLUE)
-    c7 = Controller("Carlos Santana", (200, 200, 200))
-    c8 = Controller("Solaire", (53, 193, 105))
-    c9 = Controller("Genesio", (173, 85, 33))
-    c10 = Controller("Estrume", GRAY)
-    world = World([c1, c2, c3, c4, c5, c6, c7, c8, c9, c10])
+    #c1 = Test_Controller("Domotro", STRANGE_BLUE)
+    c2 = Test_Controller("Artorias", (200, 200, 200))
+    c3 = Test_Controller("Jao", (53, 193, 105))
+    c4 = Test_Controller("Nicholas Cage", (173, 85, 33))
+    #c5 = Test_Controller("C3PO", GRAY)
+    #c6 = Test_Controller("Meh", STRANGE_BLUE)
+    #c7 = Test_Controller("Carlos Santana", (200, 200, 200))
+    #c8 = Test_Controller("Solaire", (53, 193, 105))
+    #c9 = Test_Controller("Genesio", (173, 85, 33))
+    #c10 = Test_Controller("Estrume", GRAY)
+    #world = World([c1, c2, c3, c4, c5, c6, c7, c8, c9, c10])
+    c1 = Christmann_Controller()
+    world = World([c1, c2, c3, c4])
     world.run()
